@@ -76,7 +76,7 @@ const TransactionsTable: React.FC = () => {
   };
 
   return (
-    <div>
+    <>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
         <Typography variant="h5" component="h2">
           Recent Transactions
@@ -151,7 +151,7 @@ const TransactionsTable: React.FC = () => {
           {error}
         </Alert>
       </Snackbar>
-    </div>
+    </>
   );
 };
 
