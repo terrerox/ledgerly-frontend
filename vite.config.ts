@@ -13,7 +13,7 @@ export default defineConfig(({ mode }) => {
           target: env.VITE_API_ENDPOINT, 
           changeOrigin: true,
           secure: false,
-          rewrite: (path) => path,
+          //rewrite: (path) => path,
           configure: (proxy) => {
             proxy.on('error', (err) => {
               console.log('Proxy error:', err);
