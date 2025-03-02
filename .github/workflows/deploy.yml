@@ -93,4 +93,4 @@ jobs:
         
       - name: 🔍 Verify Deployment
         run: |
-          curl ${{ secrets.APP_URL }}/swagger/v1/swagger.json
+          curl ${{ secrets.APP_URL }}
