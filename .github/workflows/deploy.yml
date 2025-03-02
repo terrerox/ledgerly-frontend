@@ -38,6 +38,9 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
+      - name: 🔑 Login to Amazon ECR
+        run: aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ secrets.REPOSITORY }}
+        
       - name: 📦 Build and Push Docker Image
         run: |
           docker build -f ./Dockerfile --build-arg APP_API_URL=${{ secrets.API_URL }} --build-arg APP_ENV=production -t ${{ secrets.REPOSITORY }} -t ${{ secrets.REPOSITORY }}:${{ github.sha }} .
