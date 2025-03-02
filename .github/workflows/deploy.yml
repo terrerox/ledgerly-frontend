@@ -1,0 +1,93 @@
+name: Deploy 🚀
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛠️ Checkout Repository
+        uses: actions/checkout@v4
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+      - name: 📦 Install Dependencies
+        run: npm install
+      - name: 🏗️ Build Project
+        run: npm run build
+    #   - name: ✅ Run Tests
+    #     run: npm test -- --watchAll=false
+
+  publish:
+    needs: build
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛠️ Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🔐 Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: 📦 Build and Push Docker Image
+        run: |
+          docker build -f ./Dockerfile --build-arg APP_API_URL=${{ secrets.API_URL }} --build-arg APP_ENV=production -t ${{ secrets.REPOSITORY }} -t ${{ secrets.REPOSITORY }}:${{ github.sha }} .
+          docker image ls
+          docker push --all-tags ${{ secrets.REPOSITORY }}
+
+  deploy:
+    needs: publish
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛠️ Checkout Repository
+        uses: actions/checkout@v4
+      - name: 🔐 Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: 🛠️ Install gettext
+        run: sudo apt-get update && sudo apt-get install -y gettext
+      - name: 🚀 Deploy to Elastic Beanstalk
+        env:
+          APP_NAME: ledgerly-frontend
+          APP_ENV_NAME: frontend
+          APP_VERSION: ${{ github.sha }}
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+          REPOSITORY: ${{ secrets.REPOSITORY }}
+        run: |
+          # Process template files
+          envsubst < ./devops/Dockerrun.aws.json > ./Dockerrun.aws.json
+          # Upload configuration files to S3
+          aws s3 cp ./Dockerrun.aws.json s3://${AWS_S3_BUCKET}/Dockerrun.aws.json
+          
+          # Create and update Elastic Beanstalk application
+          aws elasticbeanstalk create-application-version \
+            --application-name "${APP_NAME}" \
+            --version-label ${APP_VERSION} \
+            --source-bundle S3Bucket=${AWS_S3_BUCKET},S3Key=Dockerrun.aws.json
+            
+          aws elasticbeanstalk update-environment \
+            --application-name "${APP_NAME}" \
+            --version-label ${APP_VERSION} \
+            --environment-name ${APP_ENV_NAME}
+            
+          # Wait for deployment to complete
+          aws elasticbeanstalk wait environment-updated \
+            --application-name "${APP_NAME}" \
+            --version-label ${APP_VERSION} \
+            --environment-name ${APP_ENV_NAME}
+        
+      - name: 🔍 Verify Deployment
+        run: |
+          curl ${{ secrets.APP_URL }}/swagger/v1/swagger.json
