@@ -40,7 +40,7 @@ jobs:
 
       - name: 🔑 Login to Amazon ECR
         run: aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ secrets.REPOSITORY }}
-        
+
       - name: 📦 Build and Push Docker Image
         run: |
           docker build -f ./Dockerfile --build-arg APP_API_URL=${{ secrets.API_URL }} --build-arg APP_ENV=production -t ${{ secrets.REPOSITORY }} -t ${{ secrets.REPOSITORY }}:${{ github.sha }} .
@@ -69,7 +69,7 @@ jobs:
           AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
           REPOSITORY: ${{ secrets.REPOSITORY }}
         run: |
-          # Process template files
+          # Process template files!
           envsubst < ./devops/Dockerrun.aws.json > ./Dockerrun.aws.json
           # Upload configuration files to S3
           aws s3 cp ./Dockerrun.aws.json s3://${AWS_S3_BUCKET}/Dockerrun.aws.json
