@@ -1,7 +1,6 @@
 import { Transaction, CreateTransactionDto, TransactionFilter, TransactionSummary } from '../types/transaction';
 
-const API_BASE_URL = 'https://localhost:7002';
-
+const API_BASE_URL = import.meta.env.VITE_API_ENDPOINT;
 const appendFiltersToUrl = (baseUrl: string, filters?: TransactionFilter): string => {
   if (!filters) return baseUrl;
   
