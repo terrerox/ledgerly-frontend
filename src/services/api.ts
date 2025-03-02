@@ -1,5 +1,6 @@
 import { Transaction, CreateTransactionDto, TransactionFilter, TransactionSummary } from '../types/transaction';
 
+const API_ENDPOINT = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 const appendFiltersToUrl = (baseUrl: string, filters?: TransactionFilter): string => {
   if (!filters) return baseUrl;
   
@@ -19,7 +20,7 @@ const appendFiltersToUrl = (baseUrl: string, filters?: TransactionFilter): strin
 export const api = {
   async getTransactions(filters?: TransactionFilter): Promise<Transaction[]> {
     try {
-      const url = appendFiltersToUrl(`/api/Transactions`, filters);
+      const url = appendFiltersToUrl(`${API_ENDPOINT}/api/Transactions`, filters);
 
       const response = await fetch(url);
       if (!response.ok) {
@@ -34,7 +35,7 @@ export const api = {
 
   async getTransactionSummary(filters?: TransactionFilter): Promise<TransactionSummary> {
     try {
-      const url = appendFiltersToUrl(`/api/Transactions/summary`, filters);
+      const url = appendFiltersToUrl(`${API_ENDPOINT}/api/Transactions/summary`, filters);
 
       const response = await fetch(url);
       if (!response.ok) {
@@ -49,7 +50,7 @@ export const api = {
 
   async createTransaction(transaction: CreateTransactionDto): Promise<Transaction> {
     try {
-      const response = await fetch(`/api/Transactions`, {
+      const response = await fetch(`${API_ENDPOINT}/api/Transactions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
