@@ -8,6 +8,7 @@ import {
   FormControl,
   InputLabel,
   SelectChangeEvent,
+  CircularProgress,
 } from "@mui/material";
 import { TransactionType, CreateTransactionDto } from "../types/transaction";
 import { ERROR_MESSAGES } from "../constants/messages";
@@ -36,6 +37,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
   const [values, setValues] = useState<CreateTransactionDto>(initialValues);
   const [errors, setErrors] = useState<ValidationErrors>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [loading, setLoading] = useState(false);
 
   const validate = (
     fieldValues: Partial<CreateTransactionDto> = values
@@ -103,12 +105,14 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
     });
     const validationErrors = validate();
     if (Object.keys(validationErrors).length === 0) {
+      setLoading(true);
       onSubmit({
         ...values,
         amount: Number(values.amount),
       });
       setValues(initialValues);
       setTouched({});
+      setLoading(false);
     }
   };
 
@@ -163,8 +167,8 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
           <MenuItem value={TransactionType.EXPENSE}>Expense</MenuItem>
         </Select>
       </FormControl>
-      <Button variant="contained" type="submit" disabled={!isFormValid}>
-        Add Transaction
+      <Button variant="contained" type="submit" disabled={!isFormValid || loading}> {/* Disable button if loading */}
+        {loading ? <CircularProgress size={24} /> : 'Add Transaction'} {/* Show loader or button text */}
       </Button>
     </Stack>
   );

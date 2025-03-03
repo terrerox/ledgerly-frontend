@@ -19,6 +19,7 @@ import TransactionFilters from './TransactionFilters';
 import BalanceSummary from './BalanceSummary';
 import { useTransactions } from '../context/TransactionContext';
 import { TransactionType, CreateTransactionDto, TransactionFilter } from '../types/transaction';
+import CircularProgress from '@mui/material/CircularProgress';
 
 interface FilterValues {
   startDate: string;
@@ -105,7 +106,9 @@ const TransactionsTable: React.FC = () => {
       />
 
       {loading ? (
-        <Typography>Loading transactions...</Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100px' }}>
+          <CircularProgress />
+        </Box>
       ) : (
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="transactions table">
@@ -123,7 +126,7 @@ const TransactionsTable: React.FC = () => {
                   key={transaction.id}
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                 >
-                  <TableCell>{transaction.date}</TableCell>
+                  <TableCell>{new Intl.DateTimeFormat('en-US').format(new Date(transaction.date))}</TableCell>
                   <TableCell>{transaction.description}</TableCell>
                   <TableCell align="right">
                     ${transaction.amount.toFixed(2)}
