@@ -1,55 +1,33 @@
-# React + TypeScript + Vite
+# Financial Transaction Tracker
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Overview
+This project is a basic financial transaction tracking system built with a React frontend and a .NET Core backend. Users can add transactions, view their history, filter transactions, and see their total balance.
 
-Currently, two official plugins are available:
+## Tech Stack
+- **Frontend:** React with TypeScript
+- **Backend:** .NET Core Web API, Entity Framework Core
+- **Database:** SQL Server
+- **Deployment:** AWS Elastic Beanstalk using GitHub Actions
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Approach
+1. **Backend:**  
+   - Designed a simple API using .NET Core.
+   - Implemented endpoints to add transactions, retrieve filtered transaction lists, and calculate the balance.
+   - Used EF Core for data persistence, with a code-first approach.
+   
+2. **Frontend:**  
+   - Built a React application using functional components and hooks.
+   - Created components for transaction listing, filtering, and adding new transactions.
+   - Integrated with the backend using Fetch for API calls.
 
-## Expanding the ESLint configuration
+## Challenges
+- Designing flexible filtering logic on the backend to handle multiple query parameters.
+- Ensuring seamless communication between the React frontend and the .NET API.
+- Managing state in React effectively while handling asynchronous API calls.
+- Configuring a CI/CD pipeline with GitHub Actions for automated deployment to AWS Elastic Beanstalk, including secure management of AWS credentials, build automation, and handling environment updates.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
-# ledgerly-frontend
+## Learnings
+- Learned best practices for structuring a full-stack application with a clear separation of concerns.
+- Enhanced my skills in setting up and troubleshooting CI/CD pipelines, particularly with AWS Elastic Beanstalk and GitHub Actions.
+- Learned how to improve security and effectively manage secrets in the deployment pipeline.
+- Improved my Docker knowledge for both .NET and React.js, which helped in containerizing the application for consistent development and deployment environments.
